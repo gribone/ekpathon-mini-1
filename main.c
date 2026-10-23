@@ -10,6 +10,13 @@
 #include "helpers.h"
 #include "api.h"
 
+Typedef struct bus{
+int id;
+int people;
+int last_stop;
+} *bus;
+int i = 0;
+bool initialize = false;
 // --- FEATURE FUNCTIONS ---
 
 // --- IGNORE ALL THESE FUNCTIONS, THEY DO NOT
@@ -152,9 +159,8 @@ void arrivals_menu() {
 void your_awesome_feature_menu() {
   clearScreen();
   printf("\n---------------------------------------------------\n");
-  printf("ADD YOUR FEATURE HERE\n");
-  printf("Press Enter to go back to the main menu...\n");
-  getchar();
+ // int bus_in = random_in();
+ // int bus_out = random_out();
   getc(stdin);
   clearScreen();
   return;
@@ -165,6 +171,7 @@ void your_awesome_feature_menu() {
 // -- ALSO IGNORE THE BELOW FUNCTIONS, THEY ARE JUST FOR THE APP TO WORK ---
 // function for the printing of the home page
 void homepage() {
+  //free 
   printf("\n---------------------------------------------------\n");
   printf("You are at the homepage of the OASA app.\n");
   printf("Choose an option:\n");
