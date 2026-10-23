@@ -18,6 +18,24 @@ int last_stop;
 int i = 0;
 bool initialize = false;
 // --- FEATURE FUNCTIONS ---
+//
+int random_in(int passengers, int max_capacity){
+    srand(time(NULL))
+    int people_in = 1+ rand() % max_capacity;
+    if(passengers + people_in > max_capacity)
+        return max_capacity;
+    else
+     return passengers + people_in;
+}
+int random_out(int passengers, int max_capacity){
+    srand(time(NULL))
+    int people_in = 1+ rand() % max_capacity;
+    if(passengers - people_in < 0)
+        return 0;
+    else
+     return passengers - people_in;
+}
+
 
 // --- IGNORE ALL THESE FUNCTIONS, THEY DO NOT
 // CONCERN YOU, THEY ARE JUST FOR THE APP TO WORK ---
@@ -171,7 +189,7 @@ void your_awesome_feature_menu() {
 // -- ALSO IGNORE THE BELOW FUNCTIONS, THEY ARE JUST FOR THE APP TO WORK ---
 // function for the printing of the home page
 void homepage() {
-  //free 
+  //free
   printf("\n---------------------------------------------------\n");
   printf("You are at the homepage of the OASA app.\n");
   printf("Choose an option:\n");
