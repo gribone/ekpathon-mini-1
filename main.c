@@ -5,6 +5,7 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <stdbool.h>
 
 #include "parser.h"
 #include "helpers.h"
@@ -20,7 +21,7 @@ bool initialize = false;
 // --- FEATURE FUNCTIONS ---
 //
 int random_in(int passengers, int max_capacity){
-    srand(time(NULL))
+    srand(time(NULL));
     int people_in = 1+ rand() % max_capacity;
     if(passengers + people_in > max_capacity)
         return max_capacity;
@@ -28,7 +29,7 @@ int random_in(int passengers, int max_capacity){
      return passengers + people_in;
 }
 int random_out(int passengers, int max_capacity){
-    srand(time(NULL))
+    srand(time(NULL));
     int people_in = 1+ rand() % max_capacity;
     if(passengers - people_in < 0)
         return 0;
