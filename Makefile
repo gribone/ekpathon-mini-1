@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -g
+CFLAGS = -Wall -Wextra -g -lm
 TARGET = oasa
 OBJS = main.o parser.o helpers.o api.o
 

@@ -6,9 +6,9 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "parser.h"
-#include "helpers.h"
 #include "api.h"
+#include "helpers.h"
+#include "parser.h"
 
 // --- FEATURE FUNCTIONS ---
 
@@ -24,7 +24,8 @@ void print_bus_lines() {
     int j = indices[i];
     printf("%s\n", bus_lines[j]);
   }
-  printf("Write the number of the bus line you want to choose OR press 0 to go back.\n");
+  printf("Write the number of the bus line you want to choose OR press 0 to go "
+         "back.\n");
   return;
 }
 
@@ -33,7 +34,8 @@ void print_departures(int bus_index) {
   printf("\n---------------------------------------------------\n");
   int i = 1;
   while (i < departures[bus_index][0][1]) {
-    printf("%02d:%02d\n", departures[bus_index][i][0], departures[bus_index][i][1]);
+    printf("%02d:%02d\n", departures[bus_index][i][0],
+           departures[bus_index][i][1]);
     i++;
   }
   printf("Press Enter to go back to the main menu...\n");
@@ -49,7 +51,8 @@ void departures_menu() {
   int bus_choice;
   scanf("%d", &bus_choice);
   // go back if 0 is pressed
-  if (bus_choice == 0) return;
+  if (bus_choice == 0)
+    return;
   int direction = 0;
   if (bus_choice != 250 && bus_choice != 666) {
     direction = find_direction();
@@ -60,23 +63,24 @@ void departures_menu() {
   return;
 }
 
-
 // FEATURE 2: PRINT ARRIVALS
 
 void individual_stop_arrivals(int stop_index, int arrival_index) {
   clearScreen();
-  int* local_time = grab_local_time();
+  int *local_time = grab_local_time();
   printf("\n---------------------------------------------------\n");
   printf("%s:\n", bus_stops[stop_index][1]);
   // find which bus lines pass through this stop
   int i = 0;
   int stop_code = atoi(bus_stops[stop_index][0]);
-  int* bus_lines_that_pass_through_stop = find_bus_lines_for_stop(stop_code, &i);
-  int* arrival_times = NULL;
+  int *bus_lines_that_pass_through_stop =
+      find_bus_lines_for_stop(stop_code, &i);
+  int *arrival_times = NULL;
   printf("\n- - - - - - - - - - - - - - - - - - - - - - -\n");
   for (int j = 0; j < i; j++) {
     int bus_index = bus_lines_that_pass_through_stop[j];
-    arrival_times = list_of_arrival_times_two_hour_window(local_time, arrival_index, bus_index);
+    arrival_times = list_of_arrival_times_two_hour_window(
+        local_time, arrival_index, bus_index);
     printf("%s \t ", bus_lines[bus_index]);
     if (arrival_times) {
       printf("in ");
@@ -91,7 +95,8 @@ void individual_stop_arrivals(int stop_index, int arrival_index) {
   }
   free(bus_lines_that_pass_through_stop);
   free(local_time);
-  printf("Press R to refresh the arrivals OR press Enter to go back to the main menu...\n");
+  printf("Press R to refresh the arrivals OR press Enter to go back to the "
+         "main menu...\n");
   char choice;
   getchar();
   choice = getc(stdin);
@@ -101,7 +106,48 @@ void individual_stop_arrivals(int stop_index, int arrival_index) {
   return;
 }
 
-void print_arrivals(int bus_index, int* bus_indices, int num_stops) {
+void individual_stop_arrivals_with_fullness(int stop_index, int arrival_index,
+                                            int hour, int minute) {
+  clearScreen();
+  int *local_time = grab_local_time();
+  printf("\n---------------------------------------------------\n");
+  printf("%s:\n", bus_stops[stop_index][1]);
+  // find which bus lines pass through this stop
+  int i = 0;
+  int stop_code = atoi(bus_stops[stop_index][0]);
+  int *bus_lines_that_pass_through_stop =
+      find_bus_lines_for_stop(stop_code, &i);
+  int *arrival_times = NULL;
+  printf("\n- - - - - - - - - - - - - - - - - - - - - - -\n");
+  for (int j = 0; j < i; j++) {
+    int bus_index = bus_lines_that_pass_through_stop[j];
+    arrival_times = list_of_arrival_times_two_hour_window(
+        local_time, arrival_index, bus_index);
+    printf("%s \t ", bus_lines[bus_index]);
+    if (arrival_times) {
+      for (int k = 0; k < 15 && arrival_times[k] >= 0; k++) {
+        printf("\n in %d mins :: FULLNESS: %.2lf ", arrival_times[k],
+               demo_get_fullness(0, 0, hour, minute - arrival_times[k]));
+      }
+      free(arrival_times);
+    }
+    arrival_times = NULL;
+    printf("\n- - - - - - - - - - - - - - - - - - - - - - -\n");
+  }
+  free(bus_lines_that_pass_through_stop);
+  free(local_time);
+  printf("Press R to refresh the arrivals OR press Enter to go back to the "
+         "main menu...\n");
+  char choice;
+  getchar();
+  choice = getc(stdin);
+  if (choice == 'R' || choice == 'r') {
+    individual_stop_arrivals(stop_index, arrival_index);
+  }
+  return;
+}
+
+void print_arrivals(int bus_index, int *bus_indices, int num_stops) {
   clearScreen();
   printf("\n---------------------------------------------------\n");
   printf("%s:\n", bus_lines[bus_index]);
@@ -131,32 +177,70 @@ void arrivals_menu() {
   int bus_choice;
   scanf("%d", &bus_choice);
   // go back if 0 is pressed
-  if (bus_choice == 0) return;
+  if (bus_choice == 0)
+    return;
   int direction = 0;
   if (bus_choice != 250 && bus_choice != 666) {
     direction = find_direction();
   }
   int bus_index = index_of_bus(bus_choice, direction);
   int num_stops = 0;
-  int* bus_indices = grab_bus_indices(bus_index, &num_stops);
+  int *bus_indices = grab_bus_indices(bus_index, &num_stops);
   print_arrivals(bus_index, bus_indices, num_stops);
   return;
 }
 // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-// --- IGNORE UP UNTIL HERE, THE ABOVE FUNCTIONS ARE JUST FOR THE APP TO WORK ---
+// --- IGNORE UP UNTIL HERE, THE ABOVE FUNCTIONS ARE JUST FOR THE APP TO WORK
+// ---
 
 // --- THIS IS WHAT YOU HAVE TO DO, PAY ATTENTION
 // TO THE BELOW FUNCTION!!! ---
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // FEATURE 3 -> YOUR TASK: ADD YOUR FEATURE FUNCTION HERE
-void your_awesome_feature_menu() {
+
+void print_arrivals_with_fullness(int bus_index, int *bus_indices,
+                                  int num_stops, int hour, int minute) {
   clearScreen();
   printf("\n---------------------------------------------------\n");
-  printf("ADD YOUR FEATURE HERE\n");
-  printf("Press Enter to go back to the main menu...\n");
-  getchar();
-  getc(stdin);
+  printf("%s:\n", bus_lines[bus_index]);
+  int i = 0;
+  while (i < num_stops) {
+    int stop_index = bus_indices[i];
+    printf("%d. %s\n", i + 1, bus_stops[stop_index][1]);
+    i++;
+  }
+  printf("\n---------------------------------------------------\n");
+  printf("Enter the number of the stop you want to choose:\n");
+  scanf("%d", &i);
+  if (i < 1 || i > num_stops) {
+    printf("Wrong Input! Try again.\n");
+    print_arrivals_with_fullness(bus_index, bus_indices, num_stops, hour,
+                                 minute);
+    return;
+  }
+  int stop_index = bus_indices[i - 1];
+  individual_stop_arrivals_with_fullness(stop_index, i - 1, hour, minute);
   clearScreen();
+  return;
+}
+
+void your_awesome_feature_menu() {
+  clearScreen();
+  print_bus_lines();
+  int bus_choice;
+  scanf("%d", &bus_choice);
+  // go back if 0 is pressed
+  if (bus_choice == 0)
+    return;
+  int direction = 0;
+  if (bus_choice != 250 && bus_choice != 666) {
+    direction = find_direction();
+  }
+  int bus_index = index_of_bus(bus_choice, direction);
+  int num_stops = 0;
+  int *bus_indices = grab_bus_indices(bus_index, &num_stops);
+  print_arrivals_with_fullness(bus_index, bus_indices, num_stops,
+                               get_current_hour(), get_current_minute());
   return;
 }
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -168,7 +252,8 @@ void homepage() {
   printf("\n---------------------------------------------------\n");
   printf("You are at the homepage of the OASA app.\n");
   printf("Choose an option:\n");
-  printf("Bus Departures (Press 1) | Bus Stops Arrivals (Press 2) | YOUR NEW FEATURE (Press 3) | Press 0 to exit the app. \n");
+  printf("Bus Departures (Press 1) | Bus Stops Arrivals (Press 2) | YOUR NEW "
+         "FEATURE (Press 3) | Press 0 to exit the app. \n");
   int choice = 0;
   // user-input
   scanf("%d", &choice);
@@ -187,8 +272,8 @@ void homepage() {
     break;
   // default case -> in case the choice input is invalid
   default:
-    //fflush(stdin);
-    // calls the function itself again to print the above again
+    // fflush(stdin);
+    //  calls the function itself again to print the above again
     printf("Wrong Input. Try again.\n");
   }
   clearScreen();
@@ -205,7 +290,6 @@ int main() {
   match_stops_with_lines();
   // calls the homepage function
   homepage();
-
 
   // freeing -- ignore
   free_departures();
