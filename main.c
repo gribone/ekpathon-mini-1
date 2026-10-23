@@ -11,13 +11,7 @@
 #include "helpers.h"
 #include "api.h"
 
-Typedef struct bus{
-int id;
-int people;
-int last_stop;
-} *bus;
-int i = 0;
-bool initialize = false;
+
 // --- FEATURE FUNCTIONS ---
 //
 int random_in(int passengers, int max_capacity){
